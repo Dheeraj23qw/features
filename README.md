@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Enterprise Email Module
 
-## Getting Started
+A scalable, observable email module for Next.js applications built with Clean Architecture and Domain-Driven Design principles.
 
-First, run the development server:
+## Quick Start
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```typescript
+import { sendEmail, sendTemplateEmail } from "@/features/email";
+
+// Send a raw email
+await sendEmail({
+  to: [{ email: "user@example.com", name: "User" }],
+  subject: "Welcome!",
+  text: "Hello there",
+});
+
+// Send a template email
+await sendTemplateEmail(
+  { to: [{ email: "user@example.com" }] },
+  {
+    name: "welcome",
+    version: "v1",
+    locale: "en",
+    data: { name: "User" }
+  }
+);
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Multi-Provider Support**: Resend, SendGrid, SES, SMTP with automatic failover
+- **Template Engine**: Type-safe React Email templates with versioning
+- **Queue System**: In-memory queue with rate limiting and retry logic
+- **Security**: Disposable email blocking, unsubscribe header injection
+- **Observability**: Structured JSON logging, event emitter for hooks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Documentation
 
-## Learn More
+For in-depth understanding of the architecture and how to extend the module, see the documentation:
 
-To learn more about Next.js, take a look at the following resources:
+- [Email System Documentation](./docs/email-system/overview.md)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture Overview
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```mermaid
+flowchart TD
+    App --> EmailService
+    EmailService --> SecurityFirewall
+    EmailService --> TemplateRenderer
+    TemplateRenderer --> MemoryQueue
+    MemoryQueue --> ProviderRegistry
+    ProviderRegistry --> Resend
+    ProviderRegistry --> SendGrid
+    ProviderRegistry --> SES
+```
 
-## Deploy on Vercel
+## Related Modules
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Auth System](./docs/auth-system/overview.md)
+- [Notification System](./docs/notification-system/overview.md)
+- [Rate Limiting](./docs/rate-limit-system/overview.md)
+- [Cache](./docs/cache-system/overview.md)
+- [Storage](./docs/storage-system/overview.md)
+- [User Management](./docs/user-system/overview.md)
